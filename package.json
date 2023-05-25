@@ -1,0 +1,28 @@
+{
+  "name": "googlejobs",
+  "version": "1.0.0",
+  "description": "Publish jobs to Google Jobs Indexer Service.",
+  "main": "handler.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "@cloudant/cloudant": "^3.0.2",
+    "aws-sdk": "^2.395.0",
+    "googleapis": "^36.0.0",
+    "moment": "^2.24.0",
+    "nano": "^8.0.0",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5",
+    "serverless-dynamodb-local": "^0.2.35"
+  },
+  "devDependencies": {
+    "dotenv": "^6.2.0",
+    "serverless-offline": "^4.2.0",
+    "should": "^13.2.3",
+    "sinon": "^7.2.3"
+  }
+}

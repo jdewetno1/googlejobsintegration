@@ -1,0 +1,66 @@
+MASTER_LOGS_TABLENAME: master-${self:provider.stage}-logs  #${self:custom.MASTER_LOGS_TABLENAME}
+GOOGLEJOBS_JOBS_TABLENAME: ${self:service}-${self:provider.stage}-jobs
+
+IS_OFFLINE: ${self:custom.isoffline.${self:provider.stage}}
+
+region:
+  localhost:  localhost
+  dev:  eu-west-1
+  test: eu-west-1
+  prod: eu-west-1
+
+
+endpoint:
+  localhost:  http://localhost:8000
+  dev:  ???
+  test: ???
+  prod: ???
+
+
+RETRY_MAX: ${self:custom.retryMax.${self:provider.stage}}
+retryMax:
+  localhost: 5
+  dev: 5
+  test: 5
+  prod: 5
+
+ACTIVE_ENV: ${self:custom.activeEnv.${self:provider.stage}}
+activeEnv:  # | delimited
+  localhost: cloudhire
+  dev: cloudhire
+  staging: cloudhire
+  prod: cloudrecruit|flatfeerecruiting
+
+
+# COUCH_URL: ${self:custom.couch.url.${self:provider.stage}}
+# couch:
+#   url:
+#     localhost:  https://5b758bad-ee8c-4042-9d85-c8738abf5ecf-bluemix:cfde09aea3c38faf66105d38d285d921fa14360bcd096d3783b9020760e113c9@5b758bad-ee8c-4042-9d85-c8738abf5ecf-bluemix.cloudant.com/
+#     dev:        https://5b758bad-ee8c-4042-9d85-c8738abf5ecf-bluemix:cfde09aea3c38faf66105d38d285d921fa14360bcd096d3783b9020760e113c9@5b758bad-ee8c-4042-9d85-c8738abf5ecf-bluemix.cloudant.com/
+#     staging:    https://5b758bad-ee8c-4042-9d85-c8738abf5ecf-bluemix:cfde09aea3c38faf66105d38d285d921fa14360bcd096d3783b9020760e113c9@5b758bad-ee8c-4042-9d85-c8738abf5ecf-bluemix.cloudant.com/
+#     prod:       https://5b758bad-ee8c-4042-9d85-c8738abf5ecf-bluemix:cfde09aea3c38faf66105d38d285d921fa14360bcd096d3783b9020760e113c9@5b758bad-ee8c-4042-9d85-c8738abf5ecf-bluemix.cloudant.com/
+
+
+# { Y, true, Yes, ON  }    : Boolean true
+# { n, FALSE, No, off }    : Boolean false
+isoffline:
+  localhost:  true
+  dev:  false
+  test: false
+  prod: false
+
+
+# ###Comment out before deployment to aws
+# dynamodb:
+#   stages: # If you only want to use DynamoDB Local in some stages, declare them here
+#     - localhost
+#   start:
+#     migrate: true
+#     seed: true
+#     port: 8000
+#     inMemory: true
+#   seed:
+#     test:
+#       sources:
+#         - table: ${self:custom.GOOGLEJOBS_JOBS_TABLENAME}
+#           rawsources: [./fakes/activeJobs.json]

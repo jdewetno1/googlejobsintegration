@@ -1,0 +1,7 @@
+{
+  "commit": false,
+  "environment": "cloudhire",
+  "domain": "cloudhire.net",
+  "auth_key": "cloudhire-222412-9834",
+  "couch_url": "https://5b758bad-ee8c-4042-9d85-c8738abf5ecf-bluemix:cfde09aea3c38faf66105d38d285d921fa14360bcd096d3783b9020760e113c9@5b758bad-ee8c-4042-9d85-c8738abf5ecf-bluemix.cloudant.com/"
+}

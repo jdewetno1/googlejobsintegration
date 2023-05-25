@@ -1,0 +1,39 @@
+[
+  {
+    "awsConfig": {
+      "M": {
+        "awsRegion": {
+          "S": "eu-west-1"
+        },
+        "elasticSearchDomain": {
+          "S": "graylink-dev-shared"
+        },
+        "elasticSearchIndex": {
+          "S": "graylink-dev-test"
+        },
+        "s3BucketName": {
+          "S": "graylink-dev-test"
+        }
+      }
+    },
+    "sqlConfig": {
+      "M": {
+        "database": {
+          "S": "Neptune.Test.Nandos"
+        },
+        "password": {
+          "S": "timP$L6kis"
+        },
+        "server": {
+          "S": "localhost"
+        },
+        "user": {
+          "S": "sa"
+        }
+      }
+    },
+    "tenantId": {
+      "S": "test-nandos"
+    }
+  }
+]

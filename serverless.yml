@@ -1,0 +1,143 @@
+service: googlejobs
+
+provider:
+  name: aws
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'eu-west-1'}
+  runtime: nodejs8.10
+  profile: cloudhire
+  deploymentBucket: serverless-deployment-fishtank
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:GetItem
+        - dynamodb:Query
+        - dynamodb:Scan
+      Resource: "*"
+
+  environment:
+    SERVICE: ${self:service}
+    STAGE: ${self:provider.stage}
+    REGION: ${self:provider.region}
+    IS_OFFLINE: ${self:custom.IS_OFFLINE}
+    MASTER_LOGS_TABLENAME: ${self:custom.MASTER_LOGS_TABLENAME}
+    GOOGLEJOBS_JOBS_TABLENAME: ${self:custom.GOOGLEJOBS_JOBS_TABLENAME}
+    RETRY_MAX: ${self:custom.RETRY_MAX}
+    ACTIVE_ENV: ${self:custom.ACTIVE_ENV}
+
+custom: ${file(custom.yml)} # You can reference the entire file
+
+
+
+functions:
+  index:
+    name: ${self:service}-${self:provider.stage}-index
+    handler: handler.index
+    memorySize: 128
+    timeout: 300 # optional, in seconds, default is 6
+    events:  # Different schedules created due to rate limiting on the service providers.
+      - schedule:
+          name: ${self:service}-${self:provider.stage}-index-cloudrecruit
+          description: 'Index new or remove expired job ads.'
+          rate: cron(15 3 * * ? *)   # (Minutes|Hours|Day of month|Month|Day of week|Year)
+          # rate: cron(1 1 * * ? *)   # (Minutes|Hours|Day of month|Month|Day of week|Year)
+          enabled: true
+          input:
+            environment: cloudrecruit
+            domain: cloudrecruit.io
+            couch_url: https://b192832c-5e41-4eb8-a66a-e83e6f4e6b14-bluemix:ba5e0cb39f9a3adf0af330740ce68712806fcf40fb07c7a49f87649b86245686@b192832c-5e41-4eb8-a66a-e83e6f4e6b14-bluemix.cloudant.com/
+            auth_key: cloudrecruit-222412-d936f
+            commit: true
+      - schedule:
+          name: ${self:service}-${self:provider.stage}-index-flatfeerecruiting
+          description: 'Index new or remove expired job ads.'
+          rate: cron(30 3 * * ? *)   # (Minutes|Hours|Day of month|Month|Day of week|Year)
+          # rate: cron(1 1 * * ? *)   # (Minutes|Hours|Day of month|Month|Day of week|Year)
+          enabled: true
+          input:
+            environment: flatfeerecruiting
+            domain: flatfeerecruiting.co.za
+            couch_url: https://5662b47d-af3b-4992-8166-0c431010e5b3-bluemix:a5da1cc93abb68b09302d2ba772f0dafe057f122529a3615f78bc2f4169c6a0a@5662b47d-af3b-4992-8166-0c431010e5b3-bluemix.cloudant.com/
+            auth_key: flatfeerecruitment-222411-4939
+            commit: true
+      # - schedule:
+      #     name: ${self:service}-${self:provider.stage}-index-cloudhire
+      #     description: 'Index new or remove expired job ads.'
+      #     rate: cron(0 3 * * ? *)   # (Minutes|Hours|Day of month|Month|Day of week|Year)
+      #     # rate: cron(1 1 * * ? *)   # (Minutes|Hours|Day of month|Month|Day of week|Year)
+      #     enabled: true
+      #     input:
+      #       environment: cloudhire
+      #       domain: cloudhire.net
+      #       couch_url: https://5b758bad-ee8c-4042-9d85-c8738abf5ecf-bluemix:cfde09aea3c38faf66105d38d285d921fa14360bcd096d3783b9020760e113c9@5b758bad-ee8c-4042-9d85-c8738abf5ecf-bluemix.cloudant.com/
+      #       auth_key: cloudhire-222412-9834
+      #       commit: true
+
+  # dbTestInVPC:
+  #   handler: handler.dbTest
+  #   memorySize: 128
+  #   timeout: 300 # optional, in seconds, default is 6
+  #   vpc:
+  #     securityGroupIds: ${self:custom.SECURITYGROUPIDS}
+  #     subnetIds: ${self:custom.SUBNETS}
+  # dbTest:
+  #   handler: handler.dbTest
+  #   memorySize: 128
+  #   timeout: 300 # optional, in seconds, default is 6
+
+stage: localhost
+region: eu-west-1
+
+package:
+  exclude:
+    - .dynamodb/**
+    - client/**
+    - data/**
+    - fakes/**
+    - sql/**
+    - test/**
+
+
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline #serverless-offline needs to be last in the list
+
+# ###Comment out before deployment to aws
+# resources:
+#   Resources:
+#     activejobsTable:
+#       Type: AWS::DynamoDB::Table
+#       Properties:
+#         TableName: ${self:custom.GOOGLEJOBS_JOBS_TABLENAME}
+#         AttributeDefinitions:
+#           - AttributeName: orgId
+#             AttributeType: S
+#           - AttributeName: jobId
+#             AttributeType: S
+#         KeySchema:
+#           - AttributeName: orgId
+#             KeyType: HASH
+#           - AttributeName: jobId
+#             KeyType: RANGE
+#         ProvisionedThroughput:
+#           ReadCapacityUnits: 1
+#           WriteCapacityUnits: 1
+#
+#     errorsTable:
+#       Type: AWS::DynamoDB::Table
+#       Properties:
+#         TableName: ${self:custom.MASTER_LOGS_TABLENAME}
+#         AttributeDefinitions:
+#           - AttributeName: orgId
+#             AttributeType: S
+#           - AttributeName: timeStamp
+#             AttributeType: N
+#         KeySchema:
+#           - AttributeName: orgId
+#             KeyType: HASH
+#           - AttributeName: timeStamp
+#             KeyType: RANGE
+#         ProvisionedThroughput:
+#           ReadCapacityUnits: 1
+#           WriteCapacityUnits: 1

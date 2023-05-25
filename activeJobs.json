@@ -1,0 +1,15 @@
+[
+  {
+    "cleanname": { "S": "new-test-job" },
+    "jobId": { "S": "326695c3fb1fd6243c0265717a31ad68" },
+    "name": { "S": "New Test Job" },
+    "orgId": { "S": "monsterinc" },
+    "publishrange": { "L": [{ "N": "1549144800000" }, { "N": "1554155999999" }] },
+    "ref": { "S": "NTJ" },
+    "retryCount": { "N": "0" },
+    "submissionType": { "S": "URL_UPDATED (failed)" },
+    "from": { "S": "2019-02-03" },
+    "to": { "S": "2019-04-01" },
+    "url": { "S": "http://monsterinc.cloudhire.net/#/job/NTJ/new-test-job-to-be-deleted" }
+  }
+]
